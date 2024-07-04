@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
@@ -29,8 +30,9 @@ export default async function DashboardLayout({
 
   return (
     <>
-      <Navbar/>
-      {children}
+      <Navbar />
+      <div className="min-h-screen">{children}</div>
+      <Footer />
     </>
   );
 }

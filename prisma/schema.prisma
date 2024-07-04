@@ -12,35 +12,48 @@ model Store {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   userId     String
-  billboards Billboard[] @relation("StoreToBillboard")
-  categories Category[] @relation("StoreToCategory")
+  billboards Billboard[] @relation("StoreBillboards")
+  categories Category[]  @relation("StoreCategories")
+  sizes      Size[]      @relation("StoreSizes")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
 
 model Billboard {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  storeId   String      @db.ObjectId
-  store     Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
-  label     String
-  imageUrl  String
-  categories Category[] @relation("BillboardToCategory")
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  storeId    String      @db.ObjectId
+  store      Store       @relation("StoreBillboards", fields: [storeId], references: [id])
+  label      String
+  imageUrl   String
+  categories Category[]  @relation("BillboardCategories")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([storeId])
 }
 
 model Category {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  storeId     String      @db.ObjectId
+  store       Store       @relation("StoreCategories", fields: [storeId], references: [id])
+  billboardId String      @db.ObjectId
+  billboard   Billboard   @relation("BillboardCategories", fields: [billboardId], references: [id])
+  name        String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
+model Size {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   storeId    String      @db.ObjectId
-  store      Store       @relation("StoreToCategory", fields: [storeId], references: [id])
-  billboardId String     @db.ObjectId
-  billboard  Billboard   @relation("BillboardToCategory", fields: [billboardId], references: [id])
+  store      Store       @relation("StoreSizes", fields: [storeId], references: [id])
   name       String
+  value      String
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
   @@index([storeId])
-  @@index([billboardId])
 }

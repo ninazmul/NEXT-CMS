@@ -11,7 +11,7 @@ export async function GET(
       return new NextResponse("Billboard ID is required!", { status: 400 });
     }
 
-    const billboard = await prismadb.billboard.findMany({
+    const billboard = await prismadb.billboard.findUnique({
       where: {
         id: params.billboardId,
       },

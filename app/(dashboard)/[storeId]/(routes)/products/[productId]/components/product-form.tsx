@@ -32,9 +32,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const formSchema = z.object({
   name: z.string().min(1),
+  description: z.string().min(1),
   images: z.object({ url: z.string() }).array(),
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
@@ -84,9 +89,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
           ...initialData,
           price: parseFloat(String(initialData?.price)),
           images: initialData.images || [],
+          description: initialData.description || "", // Ensure description is a string
         }
       : {
           name: "",
+          description: "",
           images: [],
           price: 0,
           categoryId: "",
@@ -206,6 +213,25 @@ const ProductForm: React.FC<ProductFormProps> = ({
             />
             <FormField
               control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <ReactQuill
+                      value={field.value}
+                      onChange={(value) => field.onChange(value)}
+                      theme="snow"
+                      placeholder="Product description"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="price"
               render={({ field }) => (
                 <FormItem>
@@ -270,7 +296,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       {sizes.map((size) => (
                         <SelectItem key={size.id} value={size.id}>
                           <div className="flex items-center gap-2">
-                            {size.name} {`(${size.value})`}
+                            {size.name} {size.value}
                           </div>
                         </SelectItem>
                       ))}
@@ -300,11 +326,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                       {colors.map((color) => (
                         <SelectItem key={color.id} value={color.id}>
                           <div className="flex items-center gap-2">
+                            {color.name}{" "}
                             <div
-                              className="h-6 w-6 rounded-md border"
+                              className="h-6 w-6 rounded-full border"
                               style={{ backgroundColor: color.value }}
                             />
-                            {color.name}
                           </div>
                         </SelectItem>
                       ))}
@@ -318,19 +344,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
               control={form.control}
               name="isFeatured"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 border p-4 rounded-md">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
-                      onCheckedChange={
-                        field.onChange as (checked: boolean) => void
-                      }
+                      //@ts-ignore
+                      onCheckedChange={field.onChange}
+                      disabled={loading}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Featured</FormLabel>
                     <FormDescription>
-                      This product will appear on the home page.
+                      This product will be featured on the home page
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -340,19 +366,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
               control={form.control}
               name="isArchived"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 border p-4 rounded-md">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
-                      onCheckedChange={
-                        field.onChange as (checked: boolean) => void
-                      }
+                      //@ts-ignore
+                      onCheckedChange={field.onChange}
+                      disabled={loading}
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Archived</FormLabel>
                     <FormDescription>
-                      This product will not appear anywhere in the store!
+                      This product will not appear anywhere in the store
                     </FormDescription>
                   </div>
                 </FormItem>

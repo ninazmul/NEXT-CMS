@@ -39,6 +39,7 @@ export async function PATCH(
 
     const {
       name,
+      description,
       price,
       categoryId,
       sizeId,
@@ -54,6 +55,10 @@ export async function PATCH(
 
     if (!name) {
       return new NextResponse("Name is required!", { status: 400 });
+    }
+
+    if (!description) {
+      return new NextResponse("Description is required!", { status: 400 });
     }
 
     if (!price) {
@@ -73,7 +78,7 @@ export async function PATCH(
     }
 
     if (!images || !images.length) {
-      return new NextResponse("Images is required!", { status: 400 });
+      return new NextResponse("Images are required!", { status: 400 });
     }
 
     if (!params.productId) {
@@ -88,9 +93,7 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized!", {
-        status: 403,
-      });
+      return new NextResponse("Unauthorized!", { status: 403 });
     }
 
     await prismadb.product.update({
@@ -99,6 +102,7 @@ export async function PATCH(
       },
       data: {
         name,
+        description,
         price,
         categoryId,
         sizeId,
@@ -119,7 +123,7 @@ export async function PATCH(
       data: {
         images: {
           createMany: {
-            data: [...images.map((image: { url: string }) => image)],
+            data: images.map((image: { url: string }) => image),
           },
         },
       },
@@ -154,9 +158,7 @@ export async function DELETE(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized!", {
-        status: 403,
-      });
+      return new NextResponse("Unauthorized!", { status: 403 });
     }
 
     const product = await prismadb.product.deleteMany({
@@ -170,3 +172,4 @@ export async function DELETE(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+

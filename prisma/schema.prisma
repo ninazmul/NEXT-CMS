@@ -83,6 +83,7 @@ model Product {
   category     Category    @relation("CategoryProducts", fields: [categoryId], references: [id])
   name         String
   price        Float
+  description  String?
   isFeatured   Boolean     @default(false)
   isArchived   Boolean     @default(false)
   sizeId       String      @db.ObjectId
@@ -99,6 +100,7 @@ model Product {
   @@index([sizeId])
   @@index([colorId])
 }
+
 
 model Image {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId

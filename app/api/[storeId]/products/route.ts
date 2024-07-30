@@ -12,6 +12,7 @@ export async function POST(
 
     const {
       name,
+      description,
       price,
       categoryId,
       sizeId,
@@ -27,6 +28,10 @@ export async function POST(
 
     if (!name) {
       return new NextResponse("Name is required!", { status: 400 });
+    }
+
+    if (!description) {
+      return new NextResponse("Description is required!", { status: 400 });
     }
 
     if (!price) {
@@ -46,7 +51,7 @@ export async function POST(
     }
 
     if (!images || !images.length) {
-      return new NextResponse("Images is required!", { status: 400 });
+      return new NextResponse("Images are required!", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -61,14 +66,13 @@ export async function POST(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized!", {
-        status: 403,
-      });
+      return new NextResponse("Unauthorized!", { status: 403 });
     }
 
     const product = await prismadb.product.create({
       data: {
         name,
+        description,
         price,
         categoryId,
         sizeId,
@@ -78,7 +82,7 @@ export async function POST(
         storeId: params.storeId,
         images: {
           createMany: {
-            data: [...images.map((image: { url: string }) => image)],
+            data: images.map((image: { url: string }) => image),
           },
         },
       },
@@ -119,11 +123,11 @@ export async function GET(
         images: true,
         category: true,
         color: true,
-        size: true
-      }, 
+        size: true,
+      },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json(products);
@@ -131,3 +135,4 @@ export async function GET(
     return new NextResponse("Internal error", { status: 500 });
   }
 }
+

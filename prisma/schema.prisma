@@ -122,7 +122,7 @@ model Order {
   isPaid        Boolean     @default(false)
   phone         String      @default("")
   address       String      @default("")
-  // paymentMethod String      
+  paymentMethod String?     
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -130,15 +130,17 @@ model Order {
 }
 
 model OrderItem {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String      @db.ObjectId
-  order      Order       @relation(fields: [orderId], references: [id])
-  productId  String      @db.ObjectId
-  product    Product     @relation(fields: [productId], references: [id])
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String   @db.ObjectId
+  order      Order    @relation(fields: [orderId], references: [id])
+  productId  String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int      @default(1)
 
   @@index([orderId])
   @@index([productId])
 }
+
 
 model Blog {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId

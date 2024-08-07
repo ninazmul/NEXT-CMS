@@ -59,7 +59,13 @@ export default function MainNav({
   ];
 
   return (
-    <nav className={cn("flex flex-col lg:flex-row justify-start items-start space-y-2 lg:space-x-6", className)}>
+    <nav
+      className={cn(
+        "flex flex-col lg:flex-row lg:space-x-6 space-y-2 lg:space-y-0 lg:bg-transparent bg-gray-900 p-4 lg:p-0",
+        className
+      )}
+      {...props}
+    >
       {routes.map((route) => (
         <Link
           key={route.href}
